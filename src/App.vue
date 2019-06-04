@@ -1,31 +1,50 @@
 <template>
   <div id="app">
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
-    </div>
-    <router-view/>
+      <el-container v-if="$route.meta.keepAlive" direction="vertical">
+          <keep-alive>
+              <el-menu
+                  :default-active="this.$route.path"
+                  router
+                  class="el-menu-demo"
+                  mode="horizontal"
+                  background-color="#545c64"
+                  text-color="#fff"
+                  active-text-color="#ffd04b">
+                  <el-menu-item
+                      v-for="(item,i) in navList"
+                      :key="i"
+                      :index="item.name">
+                      {{item.navItem}}
+                  </el-menu-item>
+              </el-menu>
+          </keep-alive>
+              <el-main>
+                    <router-view/>
+              </el-main>
+      </el-container>
+      <router-view v-if="!$route.meta.keepAlive"></router-view>
   </div>
 </template>
 
+
+<script>
+    export default {
+        data() {
+            return {
+                navList:[
+                    {name:'/home',navItem:'问答中心'},
+                    {name:'/question',navItem:'常见问题'},
+                    {name:'/about',navItem:'项目介绍'},
+
+                ]
+            };
+        },
+        methods: {
+
+        }
+    }
+</script>
+
 <style>
-#app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-}
-#nav {
-  padding: 30px;
-}
 
-#nav a {
-  font-weight: bold;
-  color: #2c3e50;
-}
-
-#nav a.router-link-exact-active {
-  color: #42b983;
-}
 </style>
