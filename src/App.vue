@@ -33,7 +33,7 @@
             return {
                 navList:[
                     {name:'/home',navItem:'问答中心'},
-                    {name:'/question',navItem:'常见问题'},
+                    {name:'/history',navItem:'历史记录'},
                     {name:'/about',navItem:'项目介绍'},
 
                 ]

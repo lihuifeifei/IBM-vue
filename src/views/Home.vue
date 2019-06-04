@@ -8,16 +8,17 @@
                               <div class="user-assistant"> </div>
                               <span class="triangle"></span>
                               <div class="article">
-                                  <p>您好</p><p>欢迎使用智能知识库。</p>
-
+                                123
                               </div>
                           </div>
-                          <div class="msg fr">
-                              <span class="triangle right"></span><div class="article"><xmp>ss</xmp></div></div>
-                          <div class="msg clearfix">
-                              <div class="user-assistant"></div><span class="triangle right"></span><div class="article">马上为您查找，请稍候.....</div></div>
-                          <div class="msg clearfix">
-                              <div class="user-assistant"></div><span class="triangle right"></span><div class="article">十分抱歉，没有找到相关内容！</div></div>
+
+                          <div class="msg fr" >
+                              <span class="triangle right"></span>
+                              <div class="article">
+                                456
+                              </div>
+                          </div>
+
 
                       </div>
                   </div>
@@ -25,7 +26,7 @@
               <div class="col-l-b">
                   <div class="faq-input-content">
                       <textarea name="textfield" class="input" id="faqInput" placeholder="请提出问题" autocomplete="off"  v-model.lazy.trim="question"></textarea>
-                      <input type="button" class="btn" value="发送" @click="submit">
+                         <input type="button" class="btn" value="发送" @click="submit">
                       <div class="input-count"><span id="textCount"></span></div>
                   </div>
               </div>
@@ -39,10 +40,9 @@
 
 
 export default {
-    name: 'home',
     data(){
         return{
-            question:''
+            question:'',
         }
     },
     methods:{

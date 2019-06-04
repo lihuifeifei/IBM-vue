@@ -14,7 +14,7 @@
                     <br/>
                     <hr/>
                     <br/>
-                    <a style="display: block;float: right;font-size: 16px" >点击<a style="color: red;font-size: 16px" @click="toRegister">注册</a>>>></a>
+                    <a style="display: block;float: right;font-size: 16px" >没有账号？点击<a style="color: red;cursor:pointer;font-size: 16px" @click="toRegister">注册</a>>>></a>
                 </form>
             </div>
         </div>
@@ -33,6 +33,24 @@
                 var  password = this.password;
                 // 阻止页面刷新,取消默认行为
                 e.preventDefault();
+
+                if(!username){
+                    this.$alert('请输入用户名','提示',{
+                        confirmButtonText:'确定',
+                        type:"warning",
+                    });
+                    return false;
+                }
+
+                if (username&&!password){
+                    this.$alert('请输入密码','提示',{
+                        confirmButtonText:'确定',
+                        type:"warning",
+                    });
+                    return false;
+                }
+
+
                 console.log(`username:${username}`);
                 console.log(`password:${password}`);
 
@@ -47,15 +65,22 @@
                     .then((res)=>{
                         console.log(res.data);
                         if (res.data.status == 200){
+                            this.$message({
+                                duration:1000,
+                                showClose:true,
+                                message:'登录成功',
+                                type:'success'
+                            });
                             this.$router.push({path: '/home'});
                         }else if(res.data.msg == 'error username'){
-                            this.$alert('用户名不存在，请先注册','提示',{
-                                confirmButtonText:'确定',
-                                type:"warning",
-                               callback:action => {
-                                   this.$router.push({path:'/register'});
-                               }
-                            });
+                           this.$confirm('用户名不存在，请先注册','提示',{
+                               confirmButtonText:'确定',
+                               cancelButtonText:'取消',
+                               type:"warning",
+                           })
+                               .then(()=>{
+                               this.$router.push({path:'/register'});
+                           });
 
                         }else if(res.data.msg == 'error password'){
                             this.$alert('密码错误，请重新输入密码','提示',{

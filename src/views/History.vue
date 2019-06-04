@@ -1,6 +1,6 @@
 <template>
     <div class="home">
-        这是基本问答页面
+        这是历史记录页面
     </div>
 </template>
 

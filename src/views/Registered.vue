@@ -6,12 +6,12 @@
                 <p style="font-size: 25px;font-weight: bold">系统注册</p>
             </div>
             <form>
-                <input name="username" type="text" placeholder="用户名" v-model.lazy.trim="username">
-                <input name="password" type="password" id="password" placeholder="密码" v-model.lazy.trim="password1"/>
-                <input name="password" type="password" id="password" placeholder="确认密码" v-model.lazy.trim="password2"/>
+                <input name="username" type="text" placeholder="用户名"  v-model.lazy.trim="username">
+                <input name="password" type="password" id="password1" placeholder="密码" v-model.lazy.trim="password1"/>
+                <input name="password" type="password" id="password2" placeholder="确认密码" v-model.lazy.trim="password2"/>
                 <input value="注册" style="width:100%;" type="submit" @click="submitForm">
                 <hr/>
-                <a style="display: block;float: right;" >已有账号，点击<span style="color: red;cursor:pointer" @click="toLogin" >登陆</span>>>></a>
+                <a style="display: block;float: right;" >已有账号，点击<span style="color: red;cursor:pointer" @click="toLogin" >登录</span>>>></a>
             </form>
         </div>
     </div>
@@ -27,8 +27,57 @@
             };
         },
         methods: {
-            submitForm(){
+            submitForm(e){
+                var username = this.username;
+                var password1 = this.password1;
+                var password2 = this.password2;
 
+                // 阻止页面刷新,取消默认行为
+                e.preventDefault();
+                //验证表单信息
+                if(!(username&&password1&&password2)){
+                    this.$alert('请输入完整信息','提示',{
+                        confirmButtonText:'确定',
+                        type:"warning",
+                    });
+                    return false;
+                }
+                if(!(password1 == password2)){
+                    this.$alert('两次密码不一致，请重新输入','提示',{
+                        confirmButtonText:'确定',
+                        type:"error",
+                    });
+                    return false;
+                }
+                var formData = new FormData();
+                formData.append('username',this.username);
+                formData.append('password',this.password2);
+
+                this.$axios.post('http://129.211.64.25:8090/register',
+                    formData
+                )
+                    .then((res)=>{
+                        console.log(res);
+                        //根据返回数据，给出不同的反应
+                        if(res.data.status == 200){
+                            this.$message({
+                                duration:2000,
+                                showClose:true,
+                                message:'注册成功,请登录',
+                                type:'success'
+                            });
+                            this.$router.push({path: '/login'});
+                        }else if(res.data.msg == 'error'){
+                            this.$confirm('用户名已存在，请重新注册','提示',{
+                                confirmButtonText:'确定',
+                                cancelButtonText:'取消',
+                                type:"error",
+                            })
+                        }
+                    })
+                    .catch((error)=>{
+                        console.log(error);
+                    })
             },
             toLogin(){
                 this.$router.push({path:'/login'});
