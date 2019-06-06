@@ -49,11 +49,20 @@
                     });
                     return false;
                 }
+                // 显示loading动画
+                let loader = this.$loading.show({
+                    // 动画参数配置
+                    loader:'bars',
+                    width:120,
+                    height:80,
+                    color:'#ff2121',
+                    opacity:0.5,
+                });
                 var formData = new FormData();
                 formData.append('username',this.username);
                 formData.append('password',this.password2);
 
-                this.$axios.post('http://129.211.64.25:8090/register',
+                this.$axios.post('/register',
                     formData
                 )
                     .then((res)=>{
@@ -66,13 +75,17 @@
                                 message:'注册成功,请登录',
                                 type:'success'
                             });
+                            //隐藏loading动画
+                            loader.hide();
                             this.$router.push({path: '/login'});
                         }else if(res.data.msg == 'error'){
                             this.$confirm('用户名已存在，请重新注册','提示',{
                                 confirmButtonText:'确定',
                                 cancelButtonText:'取消',
                                 type:"error",
-                            })
+                            });
+                            //隐藏loading动画
+                            loader.hide();
                         }
                     })
                     .catch((error)=>{

@@ -4,21 +4,67 @@
               <div class="col-l-t">
                   <div class="content">
                       <div class="bubble" id="Chat">
+<!--                       一个默认的对话框-->
                           <div class="msg clearfix">
-                              <div class="user-assistant"> </div>
+                              <div class="user-assistant"></div>
                               <span class="triangle"></span>
                               <div class="article">
-                                123
+                                  Welcome! Please input your question!
                               </div>
                           </div>
 
-                          <div class="msg fr" >
-                              <span class="triangle right"></span>
-                              <div class="article">
-                                456
-                              </div>
-                          </div>
+                        <div v-for="(item,index) in QAlist">
+<!--                            提问对话框-->
+                            <div class="msg fr" >
+                                <span class="triangle right"></span>
+                                <div class="article">
+                                    {{item.input}}
+                                </div>
+                            </div>
+<!--                            回答对话框-->
 
+                            <div v-for="i in item.output">
+
+<!--                                如果回复的类型是text,并且文本中不包含图片url-->
+                                <div v-if="i.response_type == 'text'&&(!i.text.includes('png'))">
+                                  <div class="msg clearfix">
+                                      <div class="user-assistant"></div>
+                                      <span class="triangle"></span>
+                                      <div class="article">
+                                        {{i.text}}
+                                      </div>
+                                  </div>
+                                </div>
+
+<!--                                如果回复的类型是text,并且文本中包含图片url-->
+                                <div v-if="i.response_type == 'text'&&i.text.includes('png')">
+                                    <div class="msg clearfix">
+                                        <div class="user-assistant"></div>
+                                        <span class="triangle"></span>
+                                        <div class="article">
+                                            <img :src="i.text" style="width: 500px">
+                                        </div>
+                                    </div>
+                                </div>
+
+<!--                                如果回复的类型是option，以列表形式展示-->
+                                <div v-if="i.response_type == 'option'">
+                                    <div class="msg clearfix">
+                                        <div class="user-assistant"></div>
+                                        <span class="triangle"></span>
+                                        <div class="article">
+                                            <ul v-for="ii in i.options" style="list-style-type: none;padding: 0;margin: 0; ">
+                                                <li style="color: #27A9E3;cursor:pointer;text-decoration: underline" @click="submitli">
+                                                    {{ii.label}}
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                        </div>
 
                       </div>
                   </div>
@@ -43,13 +89,87 @@ export default {
     data(){
         return{
             question:'',
+            QAlist:[]
         }
     },
+    watch:{
+
+    },
     methods:{
+        //点击发送按钮
         submit(){
             var question = this.question;
             console.log(`问题是:${question}`);
+
+            // 显示loading动画
+            let loader = this.$loading.show({
+                // 动画参数配置
+                loader:'spinner',
+                width:120,
+                height:80,
+                color:'#ff8989',
+                opacity:0.5,
+            });
+
+            this.$axios.get('/ans',{
+                    params: {node: question}
+                }
+            )
+                .then((res)=>{
+                    console.log(res.data.data.output.generic);
+
+                    //将输入和输出放入一个对象中，将对象放入QAlist的后面
+                    var obj = {};
+                    obj.input = question;
+                    obj.output = res.data.data.output.generic;
+                    this.QAlist.push(obj);
+
+                    //隐藏loading动画，并将文本置空
+                    loader.hide();
+                    this.question = '';
+                })
+                .catch((error)=>{
+                    console.log(error);
+                    //隐藏loading动画
+                    loader.hide();
+                })
         },
+
+        //点击屏幕的文字
+        submitli(e){
+            var question1 = e.target.innerText;
+            console.log(`问题是:${question1}`);
+            // 显示loading动画
+            let loader = this.$loading.show({
+                // 动画参数配置
+                loader:'spinner',
+                width:120,
+                height:80,
+                color:'#ff8989',
+                opacity:0.5,
+            });
+            this.$axios.get('/ans',{
+                    params: {node: question1}
+                }
+            )
+                .then((res)=>{
+                    console.log(res.data.data.output.generic);
+
+                    //将输入和输出放入一个对象中，将对象放入QAlist的后面
+                    var obj = {};
+                    obj.input = question1;
+                    obj.output = res.data.data.output.generic;
+                    this.QAlist.push(obj);
+
+                    //隐藏loading动画
+                    loader.hide();
+                })
+                .catch((error)=>{
+                    console.log(error);
+                    //隐藏loading动画
+                    loader.hide();
+                })
+        }
     }
 
 }

@@ -54,12 +54,22 @@
                 console.log(`username:${username}`);
                 console.log(`password:${password}`);
 
+                // 显示loading动画
+                let loader = this.$loading.show({
+                    // 动画参数配置
+                    loader:'dots',
+                    width:150,
+                    height:100,
+                    color:'#70be42',
+                    opacity:0.6,
+                });
+
                 var formData = new FormData();
                 formData.append('username',this.username);
                 formData.append('password',this.password);
 
 
-                this.$axios.post('http://129.211.64.25:8090/login',
+                this.$axios.post('/login',
                     formData
                 )
                     .then((res)=>{
@@ -71,6 +81,7 @@
                                 message:'登录成功',
                                 type:'success'
                             });
+                            loader.hide();
                             this.$router.push({path: '/home'});
                         }else if(res.data.msg == 'error username'){
                            this.$confirm('用户名不存在，请先注册','提示',{
@@ -81,16 +92,18 @@
                                .then(()=>{
                                this.$router.push({path:'/register'});
                            });
-
+                            loader.hide();
                         }else if(res.data.msg == 'error password'){
                             this.$alert('密码错误，请重新输入密码','提示',{
                                 confirmButtonText:'确定',
                                 type:"error",
                             });
+                            loader.hide();
                         }
                     })
                     .catch((error)=>{
                         console.log(error);
+                        loader.hide();
                     });
             },
             toRegister(){
